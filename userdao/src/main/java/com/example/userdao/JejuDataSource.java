@@ -4,7 +4,7 @@ package com.example.userdao;
 import java.sql.*;
 
 
-public class JejuConnectionMaker implements ConnectionMaker {
+public class JejuDataSource implements DataSource {
 
     public Connection getConnection() throws ClassNotFoundException, SQLException {
         //데이터 어딨어? mysql

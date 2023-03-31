@@ -4,7 +4,7 @@ package com.example.userdao;
 import java.sql.*;
 
 
-public class HallaConnectionMaker implements ConnectionMaker {
+public class HallaDataSource implements DataSource {
 
     public Connection getConnection() throws ClassNotFoundException, SQLException {
         //데이터 어딨어? mysql

@@ -9,7 +9,14 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    springVersion = '6.0.7'
+}
+//작은따움표는 매개변수로 쓸 수 없음. 스프링은 따라서 큰 따움표로 쓸 것.
 dependencies {
+    implementation "org.springframework:spring-core:${springVersion}"
+    implementation "org.springframework:spring-context:${springVersion}"
+    implementation "org.springframework:spring-jdbc:${springVersion}"
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
     testImplementation 'org.hamcrest:hamcrest:2.2'
