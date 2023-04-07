@@ -4,29 +4,40 @@ import javax.sql.DataSource;
 import java.sql.*;
 
 public class UserDao {
-    private final DataSource dataSource;
-
-    public UserDao(DataSource dataSource){
-        this.dataSource = dataSource;
+    private final JdbcContext jdbcContext;
+    public UserDao(JdbcContext jdbcContext) {
+        this.jdbcContext = jdbcContext;
     }
 
+//    public UserDao(DataSource dataSource){
+//        this.dataSource = dataSource;
+//    }
+
     public User findById(Long id) throws ClassNotFoundException, SQLException {
+        StatementStrategy statementStrategy = new FindStatementStrategy(id);
+        return jdbcContext.jdbcContextForFind(statementStrategy);
+
+        /*
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        User user;
+        User user =null;
         try {
             connection = dataSource.getConnection();
-            preparedStatement = connection.prepareStatement
-                    ("select id, name, password from userinfo where id = ?");
-            preparedStatement.setLong(1, id);
-            resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-            user = new User();
-            user.setId(resultSet.getLong("id"));
-            user.setName(resultSet.getString("name"));
-            user.setPassword(resultSet.getString("password"));
-        } finally {
+
+            StatementStrategy statementStrategy = new Find
+//            preparedStatement = connection.prepareStatement
+//                    ("select id, name, password from userinfo where id = ?");
+//            preparedStatement.setLong(1, id);
+//            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                user = new User();
+                user.setId(resultSet.getLong("id"));
+                user.setName(resultSet.getString("name"));
+                user.setPassword(resultSet.getString("password"));
+            }
+        }finally {
             try {
                 resultSet.close();
             } catch (SQLException e) {
@@ -44,7 +55,10 @@ public class UserDao {
             }
         }
         return user;
+
+         */
     }
+    /*
 //    public User findById(Long id) throws ClassNotFoundException, SQLException {
 //
 //
@@ -70,7 +84,8 @@ public class UserDao {
 //    }
 //
 //    private static Connection getConnection() {
-//        //데이터 어딨어? mysql
+
+//        //데이터 어딨어- mysql
 //        //mysql 클래스 로딩
 //        Class.forName("org.mariadb.jdbc.Driver");
 //
@@ -100,7 +115,12 @@ public class UserDao {
 //        connection.close();
 //    }
 
+    */
+
     public void insert(User user) throws ClassNotFoundException, SQLException {
+        StatementStrategy statementStrategy = new InsertStatementStrategy(user);
+        jdbcContext.jdbcContextForInsert(user, statementStrategy);
+        /*
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -134,5 +154,106 @@ public class UserDao {
                 e.printStackTrace();
             }
         }
+
+         */
     }
+
+    public void update(User user) throws SQLException {
+        StatementStrategy statementStrategy = new UpdateStatementStrategy(user);
+        jdbcContext.jdbcContextForUpdate(statementStrategy);
+        /*
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = dataSource.getConnection();
+            //쿼리 만들고
+            StatementStrategy statementStrategy = new UpdateStatementStrategy();
+            preparedStatement = connection.prepareStatement
+                    ("update userinfo set name = ?, password = ? where id =?");
+            preparedStatement.setString(1, user.getName());
+            preparedStatement.setString(2, user.getPassword());
+            preparedStatement.setLong(3, user.getId());
+            //쿼리 실행하고
+            preparedStatement.executeUpdate();
+        } finally {
+            try {
+                preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+         */
+    }
+
+    public void delete(Long id) throws SQLException {
+        StatementStrategy statementStrategy = new DeleteStatementStrategy(id);
+        jdbcContext.jdbcContextForUpdate(statementStrategy);
+/*
+
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = dataSource.getConnection();
+            //쿼리 만들고
+
+            StatementStrategy statementStrategy = new DeleteStatementStrategy();
+            statementStrategy.makeStatement(id, connection);
+            preparedStatement = connection.prepareStatement
+                    ("delete from userinfo where id = ?");
+            preparedStatement.setLong(1, id);
+            //쿼리 실행하고
+            preparedStatement.executeUpdate();
+        } finally {
+            try {
+                preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+ */
+    }
+
+/*
+    private void jdbcContextForUpdate(StatementStrategy statementStrategy) throws SQLException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = dataSource.getConnection();
+            preparedStatement = statementStrategy.makeStatement(connection);
+            preparedStatement.executeUpdate();
+        } finally {
+            try {
+                preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+ */
+
+    /*
+//    private PreparedStatement makeStatedment(Long id. Connection connection) throws SQLException {
+//        PreparedStatement preparedStatement = null;
+//        preparedStatement = connection.prepareStatement
+//                ("delete from userinfo where id = ?");
+//        preparedStatement.setLong(1, id);
+//        return preparedStatement;
+//    }*/
 }
