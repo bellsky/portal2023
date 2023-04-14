@@ -26,8 +26,8 @@ public class DaoFactory {
         return userDao;
     }
     @Bean
-    public JdbcContext jdbcContext() throws ClassNotFoundException {
-        JdbcContext jdbcContext = new JdbcContext(dataSource());
+    public JdbcTemplate jdbcContext() throws ClassNotFoundException {
+        JdbcTemplate jdbcContext = new JdbcTemplate(dataSource());
         return jdbcContext;
     }
     @Bean
