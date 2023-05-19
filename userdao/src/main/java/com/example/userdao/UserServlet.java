@@ -1,0 +1,57 @@
+package com.example.userdao;
+
+
+import jakarta.servlet.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.io.IOException;
+import java.sql.SQLException;
+
+@Controller("/servlet")
+public class UserServlet extends GenericServlet {
+    @Autowired
+    private UserDao userDao;
+
+    @Override
+    public void destroy() {
+        System.out.println("************* destroy ***************");
+        super.destroy();
+    }
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        ApplicationContext applicationContext =
+                new AnnotationConfigApplicationContext("kr.ac.jejunu.user");
+        userDao = applicationContext.getBean("userDao", UserDao.class);
+        System.out.println("************* init ***************");
+        super.init(config);
+    }
+
+    @Override
+    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
+        String name =
+                null;
+        try {
+            name = userDao.findById(Long.parseLong(req.getParameter("id")))
+                    .getName();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("************* service ***************");
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("<html>");
+        stringBuffer.append("<body>");
+        stringBuffer.append("<h1>");
+        stringBuffer.append(String.format("Hello %s", name));
+        stringBuffer.append("</h1>");
+        stringBuffer.append("</body>");
+        stringBuffer.append("</html>");
+        res.getWriter().println(stringBuffer.toString());
+    }
+}
